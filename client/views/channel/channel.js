@@ -175,6 +175,12 @@ Channel = BlazeComponent.extendComponent({
             scrollDown();
 
             Session.set('typingInChannel', undefined);
+          } else {
+            Session.set('typingInChannel', currentChannelId());
+            this.clearTypingTimeoutId && clearTimeout(this.clearTypingTimeoutId);
+            this.clearTypingTimeoutId = setTimeout(function () {
+              Session.set('typingInChannel', undefined);
+            }, 5000);
           }
         },
         'keyup textarea[name=message]': function (event) {
@@ -220,12 +226,6 @@ Channel = BlazeComponent.extendComponent({
           $('.dropdown-menu').css({
             "position": "static",
           });
-
-          Session.set('typingInChannel', currentChannelId());
-          this.clearTypingTimeoutId && clearTimeout(this.clearTypingTimeoutId);
-          this.clearTypingTimeoutId = setTimeout(function () {
-            Session.set('typingInChannel', undefined);
-          }, 5000);
         },
         'click [data-action="remove-channel"]': function (event) {
           event.preventDefault();
@@ -287,10 +287,7 @@ Channel = BlazeComponent.extendComponent({
 
         'click [data-action="display-channel-info"]': function (event) {
           event.preventDefault();
-          $('.channel-info').toggleClass('channel-info-out');
-          $('.channel-content').toggleClass('channel-content-full');
-          $('.channel-footer').toggleClass('channel-footer-full');
-          $(".channel-add-purpose-dropdown").toggleClass("hidden");
+          App.channelInfo.toggle();
         },
 
         'click .channel-title': function (event) {
